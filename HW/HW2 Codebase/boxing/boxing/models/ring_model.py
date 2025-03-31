@@ -11,11 +11,29 @@ configure_logger(logger)
 
 
 class RingModel:
+    """
+    Represents a boxing ring where fights between two boxers take place.
+    Handles the process of adding boxers, initiating fights, and updating statistics.
+    """
+    
     def __init__(self):
+        """
+        Initializes an empty ring for boxing matches.
+        """
         self.ring: List[Boxer] = []
         logger.info("Initialized RingModel with an empty ring.")
 
     def fight(self) -> str:
+        """
+        Conducts a fight between two boxers in the ring, determining a winner based on their skills.
+        Updates the boxers' statistics accordingly and clears the ring after the fight.
+
+        Returns:
+            str: The name of the winning boxer.
+        
+        Raises:
+            ValueError: If there are fewer than two boxers in the ring.
+        """
         logger.info("Fight initiated.")
         if len(self.ring) < 2:
             logger.error("Fight cannot start: less than 2 boxers in the ring.")
@@ -57,6 +75,9 @@ class RingModel:
         return winner.name
 
     def clear_ring(self):
+        """
+        Clears the ring, removing all boxers.
+        """
         if not self.ring:
             logger.info("Clear ring requested but the ring is already empty.")
             return
@@ -64,6 +85,16 @@ class RingModel:
         logger.info("Ring cleared successfully.")
 
     def enter_ring(self, boxer: Boxer):
+        """
+        Adds a boxer to the ring if there is space available.
+
+        Args:
+            boxer (Boxer): The boxer to be added to the ring.
+        
+        Raises:
+            TypeError: If the provided object is not an instance of Boxer.
+            ValueError: If the ring already contains two boxers.
+        """
         logger.info(f"Attempting to add boxer '{boxer.name}' to the ring.")
         if not isinstance(boxer, Boxer):
             logger.error(f"Invalid type: Expected 'Boxer', got '{type(boxer).__name__}'")
@@ -77,11 +108,26 @@ class RingModel:
         logger.info(f"Boxer '{boxer.name}' entered the ring. Current ring size: {len(self.ring)}")
 
     def get_boxers(self) -> List[Boxer]:
+        """
+        Retrieves the current boxers in the ring.
+        
+        Returns:
+            List[Boxer]: A list of boxers currently in the ring.
+        """
         logger.info("Retrieving current boxers in the ring.")
         logger.info(f"Current ring contains {len(self.ring)} boxer(s).")
         return self.ring
 
     def get_fighting_skill(self, boxer: Boxer) -> float:
+        """
+        Calculates the fighting skill of a boxer based on weight, reach, and age.
+        
+        Args:
+            boxer (Boxer): The boxer whose skill is being calculated.
+        
+        Returns:
+            float: The computed fighting skill score.
+        """
         logger.info(f"Calculating fighting skill for boxer '{boxer.name}'.")
         # Arbitrary calculations:
         age_modifier = -1 if boxer.age < 25 else (-2 if boxer.age > 35 else 0)
