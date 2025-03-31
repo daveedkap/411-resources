@@ -13,6 +13,18 @@ configure_logger(logger)
 
 @dataclass
 class Boxer:
+    """
+    Represents a boxer with personal attributes and automatically assigns a weight class.
+    
+    Attributes:
+        id (int): Unique identifier for the boxer.
+        name (str): Name of the boxer.
+        weight (int): Weight of the boxer in pounds.
+        height (int): Height of the boxer in inches.
+        reach (float): Reach of the boxer in inches.
+        age (int): Age of the boxer.
+        weight_class (str): Automatically assigned weight class based on weight.
+    """
     id: int
     name: str
     weight: int
@@ -22,10 +34,26 @@ class Boxer:
     weight_class: str = None
 
     def __post_init__(self):
+        """
+        Initializes a weight class for the boxer based on their weight.
+        """
         self.weight_class = get_weight_class(self.weight)  # Automatically assign weight class
 
 
 def create_boxer(name: str, weight: int, height: int, reach: float, age: int) -> None:
+    """
+    Creates a new boxer and adds them to the database.
+    
+    Args:
+        name (str): The name of the boxer.
+        weight (int): The weight of the boxer in pounds.
+        height (int): The height of the boxer in inches.
+        reach (float): The reach of the boxer in inches.
+        age (int): The age of the boxer.
+    
+    Raises:
+        ValueError: If the provided attributes are invalid or if the boxer already exists.
+    """
     logger.info(f"Starting creation of boxer: {name}")
     
     if weight < 125:
@@ -66,6 +94,15 @@ def create_boxer(name: str, weight: int, height: int, reach: float, age: int) ->
 
 
 def delete_boxer(boxer_id: int) -> None:
+    """
+    Deletes a boxer from the database by their unique ID.
+    
+    Args:
+        boxer_id (int): The ID of the boxer to be deleted.
+    
+    Raises:
+        ValueError: If the boxer does not exist.
+    """
     logger.info(f"Attempting to delete boxer with ID {boxer_id}")
     try:
         with get_db_connection() as conn:
@@ -86,6 +123,18 @@ def delete_boxer(boxer_id: int) -> None:
 
 
 def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
+    """
+    Retrieves a leaderboard of boxers sorted by either wins or win percentage.
+    
+    Args:
+        sort_by (str): The criteria to sort the leaderboard. Accepts 'wins' or 'win_pct'.
+    
+    Returns:
+        List[dict[str, Any]]: A list of dictionaries containing boxer stats.
+    
+    Raises:
+        ValueError: If an invalid sort criteria is provided.
+    """
     logger.info(f"Generating leaderboard sorted by '{sort_by}'")
     query = """
         SELECT id, name, weight, height, reach, age, fights, wins,
@@ -136,6 +185,18 @@ def get_leaderboard(sort_by: str = "wins") -> List[dict[str, Any]]:
 
 
 def get_boxer_by_id(boxer_id: int) -> Boxer:
+    """
+    Retrieves a boxer by their unique ID.
+    
+    Args:
+        boxer_id (int): The ID of the boxer to retrieve.
+    
+    Returns:
+        Boxer: The boxer object corresponding to the provided ID.
+    
+    Raises:
+        ValueError: If no boxer with the given ID is found.
+    """
     logger.info(f"Attempting to retrieve boxer with ID {boxer_id}")
     try:
         with get_db_connection() as conn:
@@ -164,6 +225,18 @@ def get_boxer_by_id(boxer_id: int) -> Boxer:
 
 
 def get_boxer_by_name(boxer_name: str) -> Boxer:
+    """
+    Retrieves a boxer by their name.
+    
+    Args:
+        boxer_name (str): The name of the boxer to retrieve.
+    
+    Returns:
+        Boxer: The boxer object corresponding to the provided name.
+    
+    Raises:
+        ValueError: If no boxer with the given name is found.
+    """
     logger.info(f"Attempting to retrieve boxer with name '{boxer_name}'")
     try:
         with get_db_connection() as conn:
@@ -192,6 +265,18 @@ def get_boxer_by_name(boxer_name: str) -> Boxer:
 
 
 def get_weight_class(weight: int) -> str:
+    """
+    Determines the weight class of a boxer based on their weight.
+    
+    Args:
+        weight (int): The weight of the boxer in pounds.
+    
+    Returns:
+        str: The weight class of the boxer.
+    
+    Raises:
+        ValueError: If the weight is below the minimum allowed value.
+    """
     logger.info(f"Determining weight class for weight: {weight}")
     if weight >= 203:
         weight_class = 'HEAVYWEIGHT'
@@ -210,6 +295,16 @@ def get_weight_class(weight: int) -> str:
 
 
 def update_boxer_stats(boxer_id: int, result: str) -> None:
+    """
+    Updates the fight record of a boxer based on the result of a match.
+    
+    Args:
+        boxer_id (int): The ID of the boxer whose record is to be updated.
+        result (str): The result of the match ('win' or 'loss').
+    
+    Raises:
+        ValueError: If the result is invalid or the boxer does not exist.
+    """
     logger.info(f"Updating stats for boxer with ID {boxer_id} with result '{result}'")
     if result not in {'win', 'loss'}:
         logger.error(f"Invalid result: {result}. Expected 'win' or 'loss'.")
@@ -236,4 +331,3 @@ def update_boxer_stats(boxer_id: int, result: str) -> None:
     except sqlite3.Error as e:
         logger.error(f"SQLite error while updating stats for boxer with ID {boxer_id}: {e}")
         raise e
-
