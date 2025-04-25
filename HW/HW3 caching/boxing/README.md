@@ -203,19 +203,10 @@ The app uses:
 
 ### 🔨 Build the image:
 
-```bash
-docker build -t cs411-final .
-```
-
-### 🚀 Run the container:
-
-```bash
-docker run -p 5010:5000 cs411-final
-```
+Run bash run_docker.sh
 
 Then visit:  
-- `http://localhost:5010/api/health`  
-- `http://localhost:5010/api/dog-image`
+- curl http://localhost:5020/api/dog-image
 
 ---
 
