@@ -10,6 +10,7 @@ from boxing.models.boxers_model import Boxers
 from boxing.models.ring_model import RingModel
 from boxing.models.user_model import Users
 from boxing.utils.logger import configure_logger
+from boxing.utils.dog_api import get_random_dog_image
 
 
 load_dotenv()
@@ -688,6 +689,24 @@ def create_app(config_class=ProductionConfig):
             "count": count
         }), 200)
 
+
+    ############################################################
+    #
+    # Dog Image
+    #
+    ############################################################
+
+
+    @app.route('/api/dog-image', methods=['GET'])
+    def dog_image() -> Response:
+        """Fetch a random dog image from the external Dog API."""
+        try:
+            img_url = get_random_dog_image()
+            return jsonify({"status": "success", "image_url": img_url})
+        except Exception as e:
+            app.logger.error(f"Dog API error: {e}")
+            return jsonify({"status": "error", "message": str(e)}), 500
+        
 
     ############################################################
     #
