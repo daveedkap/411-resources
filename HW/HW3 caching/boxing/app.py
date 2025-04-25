@@ -672,6 +672,21 @@ def create_app(config_class=ProductionConfig):
                 "message": "An internal error occurred while retrieving boxers",
                 "details": str(e)
             }), 500)
+    
+    @app.route('/api/get-ring-count', methods=['GET'])
+    @login_required
+    def get_ring_count() -> Response:
+        """Return the number of boxers currently in the ring.
+
+        Returns:
+            JSON response with the count of boxers in the ring.
+        """
+        count = len(ring_model.ring)
+        app.logger.info(f"Current ring count: {count}")
+        return make_response(jsonify({
+            "status": "success",
+            "count": count
+        }), 200)
 
 
     ############################################################
